@@ -41,12 +41,12 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "django_countries",
     "phonenumber_field",
-    "dry_yasg",
+    "drf_yasg",
     "corsheaders",
 ]
 
 LOCAL_APPS = [
-    "core_apps.profile",
+    "core_apps.profiles",
     "core_apps.common",
     "core_apps.users"
 ]
