@@ -1,0 +1,27 @@
+ARG PYTHON_VERSION=3.11.2-bullseye
+
+FROM python:${PYTHON_VERSION} as python
+
+FROM python as python-build-stage
+ARG BUILD_ENVIRONMENT=local
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    libpq-dev
+
+COPY ./requirements .
+
+RUN pip wheel --wheel-dir /usr/src/app/wheels \
+    -r ${BUILD_ENVIRONMENT}.txt
+
+
+FROM python sa python-run-stage
+ARG BUILD_ENVIRONMENT=local
+
+ARG APP_HOME=/app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+
+ENV PYTHONUNBUFFERED 1
+
+ENV BUILD_ENV ${BUILD_ENVIRONMENT}
