@@ -40,7 +40,11 @@ COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 RUN pip install -no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
     && rm -rf /wheels/
 
-COPY ./docker/local/django/entrypoint/ /entrypoint
-
+COPY ./docker/local/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod 777 /entrypoint
+
+
+COPY ./docker/local/django/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod 777 /start
