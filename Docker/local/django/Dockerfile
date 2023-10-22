@@ -25,3 +25,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 ENV BUILD_ENV ${BUILD_ENVIRONMENT}
+
+WORKDIT ${APP_HOME}
+
+RUN apt-get update && apt-get install --no-install -y \
+    libpq-dev \
+    gettext \  
