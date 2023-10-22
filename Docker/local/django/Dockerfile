@@ -48,3 +48,7 @@ RUN chmod 777 /entrypoint
 COPY ./docker/local/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod 777 /start
+
+COPY . ${APP_HOME}
+
+ENTRYPOINT [ "/entrypoint" ]
