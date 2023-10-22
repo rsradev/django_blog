@@ -26,8 +26,21 @@ ENV PYTHONUNBUFFERED 1
 
 ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 
-WORKDIT ${APP_HOME}
+WORKDIR ${APP_HOME}
 
 RUN apt-get update && apt-get install --no-install -y \
     libpq-dev \
     gettext \  
+    && apt-get purge -y --auto-remove -o 
+    APT::AutoRemove::RecommendsImportant=false \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=python-build-stage /usr/src/app/wheels /wheels/
+
+RUN pip install -no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
+    && rm -rf /wheels/
+
+COPY ./docker/local/django/entrypoint/ /entrypoint
+
+RUN sed -i 's/\r$//g' /entrypoint
+RUN chmod 777 /entrypoint
