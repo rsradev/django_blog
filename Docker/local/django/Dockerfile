@@ -3,6 +3,7 @@ ARG PYTHON_VERSION=3.11.2-bullseye
 FROM python:${PYTHON_VERSION} as python
 
 FROM python as python-build-stage
+
 ARG BUILD_ENVIRONMENT=local
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -15,7 +16,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels \
     -r ${BUILD_ENVIRONMENT}.txt
 
 
-FROM python sa python-run-stage
+FROM python as python-run-stage
 ARG BUILD_ENVIRONMENT=local
 
 ARG APP_HOME=/app
@@ -28,16 +29,15 @@ ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 
 WORKDIR ${APP_HOME}
 
-RUN apt-get update && apt-get install --no-install -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
     libpq-dev \
     gettext \  
-    && apt-get purge -y --auto-remove -o 
-    APT::AutoRemove::RecommendsImportant=false \
+    && apt-get purge -y --auto-remove -o  APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 
-RUN pip install -no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
+RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
     && rm -rf /wheels/
 
 COPY ./docker/local/django/entrypoint /entrypoint
